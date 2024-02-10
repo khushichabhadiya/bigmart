@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:bigmart/utils/common/appcolor.dart';
 import 'package:bigmart/utils/common/appimage.dart';
@@ -5,11 +6,14 @@ import 'package:bigmart/utils/common/apptext.dart';
 import 'package:bigmart/utils/common/textfiled.dart';
 import 'package:bigmart/view/Auth/account_screen.dart';
 import 'package:bigmart/view/Onbording/commomsplash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/common/gobletext.dart';
+import '../NavigationScreen/homescreen.dart';
 import '../bottpmnavigationbar.dart';
 
 class Screen5 extends StatefulWidget {
@@ -20,8 +24,35 @@ class Screen5 extends StatefulWidget {
 }
 
 class _Screen5State extends State<Screen5> {
-  TextEditingController emailController=TextEditingController();
-  TextEditingController passwordController=TextEditingController();
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController= TextEditingController();
+
+
+  void sing() async {
+    String email = emailController.text.trim();
+    String passwor = passwordController.text.trim();
+    String name = nameController.text.trim();
+
+    if (email == '' || passwor == '' || name == '') {
+      log('Please fill in the detail');
+    } else {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: passwor);
+        log('user created');
+        if (userCredential.user != null) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacement(
+              context, CupertinoPageRoute(builder: (context) => BottomNavigationScreen()));
+
+        }
+      } on FirebaseAuthException catch (e) {
+        log(e.code.toString());
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +95,10 @@ class _Screen5State extends State<Screen5> {
               SizedBox(
                 height: 49,
               ),
-              Commantextfieldwidget(text: AppText.Auth1,controller: emailController,),
+              Commantextfieldwidget(
+                text: AppText.Auth1,
+                controller: emailController,
+              ),
               SizedBox(height: 40),
               Commantextfieldwidget(
                 text: AppText.Auth2,
@@ -92,11 +126,13 @@ class _Screen5State extends State<Screen5> {
                 height: 30,
               ),
               InkWell(
-                onTap: ()async{
+                onTap: () async {
+                          sing();
                   if (emailController.text.isNotEmpty&&passwordController.text.isNotEmpty){
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     prefs.setString('username', emailcontroller.text);
                     Navigator.pushReplacement(
+
                       context,
                       MaterialPageRoute(
                         builder: (context) => AccountScreen(email: '', password: '',),
@@ -235,7 +271,10 @@ class _Screen5State extends State<Screen5> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => AccountScreen(email: '', password: '',)));
+                                    builder: (_) => AccountScreen(
+                                          email: '',
+                                          password: '',
+                                        )));
                           },
                         text: 'singn Up?',
                         style: TextStyle(

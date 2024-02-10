@@ -1,6 +1,9 @@
+import 'package:bigmart/view/Auth/screen5.dart';
 import 'package:bigmart/view/TabBarScreen/logoutscreen.dart';
 import 'package:bigmart/view/TabBarScreen/orderscreen.dart';
 import 'package:bigmart/view/TabBarScreen/walletscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/common/appcolor.dart';
@@ -37,6 +40,14 @@ class _ProfileScreenState extends State<ProfileScreen>
     setState(() {
       selectindex = index;
     });
+  }
+  void logOut() async {
+    await FirebaseAuth.instance.signOut();
+
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacement(context,
+        CupertinoPageRoute(builder: (context) => const Screen5()));
+
   }
 
   Widget build(BuildContext context) {
@@ -220,21 +231,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 Column(
                   children: [
-                    Container(
-                      height: 42,
-                      width: 42,
-                      decoration: BoxDecoration(
-                        color: selectindex == 3
-                            ? Appcolor.primerycolor
-                            : Appcolor.profileScreen,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset(
-                        'assets/image/logout (4) 1.png',
-                        scale: 3,
-                        color: selectindex == 3
-                            ? Colors.white
-                            : Appcolor.primerycolor,
+                    InkWell(
+                      onTap: () {
+                        logOut();
+                      },
+
+                      child: Container(
+                        height: 42,
+                        width: 42,
+                        decoration: BoxDecoration(
+                          color: selectindex == 3
+                              ? Appcolor.primerycolor
+                              : Appcolor.profileScreen,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset(
+                          'assets/image/logout (4) 1.png',
+                          scale: 3,
+                          color: selectindex == 3
+                              ? Colors.white
+                              : Appcolor.primerycolor,
+                        ),
                       ),
                     ),
                     SizedBox(

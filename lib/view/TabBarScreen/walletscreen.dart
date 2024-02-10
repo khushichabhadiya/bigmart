@@ -88,7 +88,8 @@ class _WalletScreenState extends State<WalletScreen> {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: Appcolor.shopscreen,
-                          )),
+                          ),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -138,7 +139,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                       color: Appcolor.primerycolor,
                                       fontsize: 16,
                                       fontWeight: FontWeight.w500,
-                                    )
+                                    ),
                                   ],
                                 )
                               ],
@@ -148,7 +149,8 @@ class _WalletScreenState extends State<WalletScreen> {
                       ),
                     ),
                   );
-                })
+                },
+            ),
           ],
         ),
       ),

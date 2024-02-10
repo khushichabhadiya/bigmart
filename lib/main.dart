@@ -1,3 +1,4 @@
+import 'package:bigmart/firebase_options.dart';
 import 'package:bigmart/view/Auth/account_screen.dart';
 import 'package:bigmart/view/Auth/screen5.dart';
 import 'package:bigmart/view/Auth/verification.dart';
@@ -5,10 +6,15 @@ import 'package:bigmart/view/NavigationScreen/homescreen.dart';
 import 'package:bigmart/view/Onbording/logo_screen.dart';
 import 'package:bigmart/view/Onbording/page_view.dart';
 import 'package:bigmart/view/bottpmnavigationbar.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

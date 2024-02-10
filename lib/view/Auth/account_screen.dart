@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:bigmart/view/Auth/verification.dart';
 import 'package:bigmart/view/bottpmnavigationbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,16 +16,41 @@ import '../../utils/common/textfiled.dart';
 class AccountScreen extends StatefulWidget {
   final String email;
   final String password;
-  const AccountScreen({super.key, required this.email, required this.password});
+  AccountScreen({super.key, required this.email, required this.password});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
 }
+
 TextEditingController emailcontroller = TextEditingController();
 TextEditingController passwordcontroller = TextEditingController();
 
-
 class _AccountScreenState extends State<AccountScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+
+  void creatAccount() async {
+    String email = emailController.text.trim();
+    String passwor = passwordController.text.trim();
+    String name = nameController.text.trim();
+
+    if (email == '' || passwor == '' || name == '') {
+      log('Please fill in the detail');
+    } else {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: passwor);
+        log('user created');
+        if (userCredential.user != null) {
+          Navigator.pop(context);
+        }
+      } on FirebaseAuthException catch (e) {
+        log(e.code.toString());
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -64,14 +92,21 @@ class _AccountScreenState extends State<AccountScreen> {
               const SizedBox(
                 height: 49,
               ),
-              Commantextfieldwidget(text: AppText.Auth4),
+              Commantextfieldwidget(
+                text: AppText.Auth4,
+                controller: nameController,
+              ),
               const SizedBox(
                 height: 20,
               ),
-              Commantextfieldwidget(text: AppText.Auth1),
+              Commantextfieldwidget(
+                text: AppText.Auth1,
+                controller: emailController,
+              ),
               const SizedBox(height: 20),
               Commantextfieldwidget(
                 text: AppText.Auth2,
+                controller: passwordController,
                 icon: const Icon(Icons.visibility_off_outlined),
               ),
               const SizedBox(
@@ -106,17 +141,16 @@ class _AccountScreenState extends State<AccountScreen> {
                 height: 30,
               ),
               InkWell(
-
                 onTap: () {
+                  creatAccount();
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VerificationScreen(email: emailcontroller.text, password: passwordcontroller.text,),
-                      ),
-                    );
-                  },
-
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VerificationScreen(email: emailcontroller.text, password: passwordcontroller.text,),
+                    ),
+                  );
+                },
                 child: Container(
                   height: 42,
                   width: double.infinity,
@@ -228,9 +262,12 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     TextSpan(
                       recognizer: TapGestureRecognizer()
-                        ..onTap = ()async {
-          
-          
+                        ..onTap = () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      AccountScreen(email: '', password: '')));
                         },
                       text: 'singn In?',
                       style: TextStyle(
